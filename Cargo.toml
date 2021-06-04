@@ -6,7 +6,7 @@ edition = "2018"
 license = "MIT OR Apache-2.0"
 description = "An implementation of Flow Based Programming for the Rust language"
 readme = "README.md"
-
+repository = "https://github.com/pesa-rustdevs/fbp_crate.git"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
