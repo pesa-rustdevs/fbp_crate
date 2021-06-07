@@ -461,7 +461,7 @@ impl FBPNodeContext {
         self.node_completion.clone().await;
     }
 
-    /// Returns if a node is fully configured
+    /// Returns whether a node is fully configured
     ///
     /// This will return true if the node is fully configured
     ///
@@ -509,7 +509,7 @@ impl FBPNodeContext {
         self.is_configured.clone().await;
     }
 
-    /// Returns if the node has suspended processing
+    /// Returns whether the node has suspended processing
     ///
     /// This will return true if the node has been suspended
     ///

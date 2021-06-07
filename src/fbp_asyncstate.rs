@@ -110,7 +110,7 @@ impl AsyncState {
         }
     }
 
-    /// Returns if this asyncstate is ready.  Ready means that the item that this state is
+    /// Returns whether this asyncstate is ready.  Ready means that the item that this state is
     /// monitoring has completed
     ///
     /// # Example
