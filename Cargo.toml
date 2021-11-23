@@ -1,6 +1,6 @@
 [package]
 name = "fbp"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["PESA Rust developers <rustdev@pesa.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -20,6 +20,7 @@ strum = { version = "0.20", features = ["derive"] }
 strum_macros = "0.20.*"
 async-trait = "0.1.50"
 actix-rt = "2.2.0"
+tokio = "0.2.23"
 
 [features]
 fbp_network = []

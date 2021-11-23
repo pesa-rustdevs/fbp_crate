@@ -621,6 +621,11 @@ pub trait FBPNodeTrait: Sync + Send + 'static {
     where
         Self: std::marker::Sized + Send + Sync + Clone + 'static,
     {
+
+        if  self.node_data().node_is_running() == true {
+            return;
+        }
+
         // Mark the node as running
         self.node_data().set_node_is_running(true);
 

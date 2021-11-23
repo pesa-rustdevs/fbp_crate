@@ -53,6 +53,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
 use uuid::Uuid;
+use std::{thread, time};
 
 #[cfg(feature = "fbp_network")]
 use strum::IntoEnumIterator;
@@ -71,8 +72,6 @@ use strum_macros::EnumString;
 
 use crate::fbp_asyncstate::*;
 use crate::fbp_iidmessage::*;
-#[cfg(feature = "fbp_network")]
-use crate::fbp_node_context::*;
 use crate::fbp_node_context::*;
 
 /// # NodeCreator Trait
@@ -621,7 +620,22 @@ impl NetworkConfiguration {
             .map(|node| &mut node.node_completion)
             .collect();
 
-        join_all(contents).await;
+        let mut loop_value = true;
+        while loop_value {
+            let mut completed = true;
+            for x in &contents {
+                if !x.is_ready() {
+                    completed = false;
+                }
+            }
+
+            if !completed {
+                thread::sleep(time::Duration::from_millis(100));
+            } else {
+                loop_value = false;
+            }
+        } 
+        // join_all(contents).await;
     }
 }
 
@@ -649,6 +663,7 @@ mod tests {
     use crate::fbp_node_error::*;
     use crate::fbp_node_trait::*;
     use crate::fbp_threadsafe_wrapper::*;
+    use crate::fbp_wait_for_payload::*;
 
     /* --------------------------------------------------------------------------
      Define some FBP nodes that can be used for testing.
@@ -692,6 +707,7 @@ mod tests {
             &mut self,
             msg: IIDMessage,
         ) -> std::result::Result<IIDMessage, NodeError> {
+
             Ok(msg.clone())
         }
     }
@@ -995,6 +1011,7 @@ mod tests {
     #[cfg(feature = "fbp_network")]
     make_nodes!(PassthroughNode, AppendNode, LoggerNode);
 
+    
     #[test]
     #[cfg(feature = "fbp_network")]
     fn feature_test() {
@@ -1061,6 +1078,35 @@ mod tests {
 
         let log_string = log_string_result.unwrap();
         assert_eq!(log_string, "Hello World".to_string());
+    }
+
+
+    // Do the same thing as the by_hand_node_network test does except
+    // wait for the payload instead of using a sleep.
+    #[actix_rt::test]
+    async fn by_hand_node_network_with_wait() {
+        let mut pt_node = PassthroughNode::new();
+        let mut ap_node = AppendNode::new();
+        let mut wait_node = WaitForPayloadNode::new();
+
+        ap_node.set_append_data(" World".to_string());
+
+        pt_node
+            .node_data_mut()
+            .add_receiver(ap_node.node_data_mut(), None);
+
+        ap_node
+            .node_data_mut()
+            .add_receiver(wait_node.node_data_mut(), None);
+
+        let data_msg = IIDMessage::new(MessageType::Data, Some("Hello".to_string()));
+        pt_node.node_data().post_msg(data_msg);
+
+
+        let the_payload = wait_node.get_payload().await;
+
+        assert_ne!(the_payload.is_empty(), true);
+        assert_eq!(the_payload, "Hello World".to_string());
     }
 
     // The network_json test, takes a JSON string that could be part of a "setup" that had

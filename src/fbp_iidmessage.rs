@@ -25,11 +25,11 @@ use uuid::Uuid;
 ///
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MessageType {
-    /// A 'normal' data message to be processed by an FBP Node
+    /// A 'normal' data message to be processed by an FBP Node.
     Data,
-    /// The configuration message is used to modify an FBP Node
+    /// The configuration message is used to modify an FBP Node.
     Config,
-    /// The process message is used to control the running of an FBP Node
+    /// The process message is used to control the running of an FBP Node.
     Process,
     /// The invalid message is used to stop message propagation.
     Invalid,
@@ -41,7 +41,7 @@ pub enum MessageType {
 pub enum SubMessageType {
     /// A 'normal' message.  One that need to be processed
     Normal,
-    /// This sub-message type specifies that this message is a reply to a previously sent message
+    /// This sub-message type specifies that this message is a reply to a previously sent messages.
     /// It is mostly used by the TCP system
     Reply,
 }
